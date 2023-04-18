@@ -75,9 +75,10 @@ class _NoteViewState extends State<NoteView> {
             devtools.log(option.toString());
             switch (option) {
               case MenuOptions.logout:
-                final showDialog = await showLogOutDialog(context);
-                if (showDialog) {
+                final shouldDialog = await showLogOutDialog(context);
+                if (shouldDialog) {
                   await FirebaseAuth.instance.signOut();
+                  Navigator.of(context).pushReplacementNamed('/login/');
                 }
                 break;
             }
