@@ -5,6 +5,7 @@ import 'package:privatenotes/constants/routes.dart';
 import 'dart:developer' as devtools show log;
 
 import '../firebase_options.dart';
+import '../utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -84,9 +85,13 @@ class _LoginViewState extends State<LoginView> {
                           await showErrorDialog(context,
                               'Wrong password provided for that user.');
                         } else {
-                          await showErrorDialog(context, e.toString());
+                          await showErrorDialog(
+                            context,
+                            'Error:  ${e.code}',
+                          );
                         }
-                        devtools.log(e.toString());
+                      } catch (e) {
+                        await showErrorDialog(context, e.toString());
                       }
                     },
                     child: const Text('Login'),
@@ -107,23 +112,4 @@ class _LoginViewState extends State<LoginView> {
       ),
     );
   }
-}
-
-Future<void> showErrorDialog(BuildContext context, String message) async {
-  return showDialog<void>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      });
 }
