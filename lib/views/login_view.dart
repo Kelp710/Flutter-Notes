@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:privatenotes/constants/routes.dart';
 import 'dart:developer' as devtools show log;
 
 import '../firebase_options.dart';
@@ -77,10 +78,13 @@ class _LoginViewState extends State<LoginView> {
                             '/notes/', (route) => false);
                       } on FirebaseAuthException catch (e) {
                         if (e.code == 'user-not-found') {
-                          devtools.log('No user found for that email.');
+                          await showErrorDialog(
+                              context, 'No user found for that email.');
                         } else if (e.code == 'wrong-password') {
-                          devtools
-                              .log('Wrong password provided for that user.');
+                          await showErrorDialog(context,
+                              'Wrong password provided for that user.');
+                        } else {
+                          await showErrorDialog(context, e.toString());
                         }
                         devtools.log(e.toString());
                       }
@@ -90,7 +94,7 @@ class _LoginViewState extends State<LoginView> {
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/register/', (route) => false);
+                          registerRoute, (route) => false);
                     },
                     child: const Text('Not registered?'),
                   )
@@ -103,4 +107,23 @@ class _LoginViewState extends State<LoginView> {
       ),
     );
   }
+}
+
+Future<void> showErrorDialog(BuildContext context, String message) async {
+  return showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      });
 }
